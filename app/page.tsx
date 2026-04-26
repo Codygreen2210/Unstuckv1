@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Check, Sparkles, Timer, MessageCircle, ListChecks, Moon } from "lucide-react";
+import { EmailSignup } from "@/components/email-signup";
 
 export default function LandingPage() {
   return (
@@ -233,6 +234,11 @@ export default function LandingPage() {
           Open Unstuck
           <ArrowRight className="h-4 w-4" />
         </Link>
+      </section>
+
+      {/* EMAIL SIGNUP */}
+      <section className="mx-auto max-w-2xl px-6 pb-20">
+        <EmailSignup />
       </section>
 
       <footer className="border-t border-cream-200">
