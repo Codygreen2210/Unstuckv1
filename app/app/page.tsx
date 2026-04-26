@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Flame, CheckCircle2, Timer, ListChecks, MessageCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Flame, CheckCircle2, Timer, ListChecks, MessageCircle, ArrowRight, Sparkles, Settings, Bell } from "lucide-react";
 import { StuckFlow } from "@/components/stuck-flow";
 import {
   firstIncompleteTask,
@@ -10,15 +10,21 @@ import {
   type Stats,
   type Task,
 } from "@/lib/storage";
+import { getReminderPref } from "@/lib/reminders";
 
 export default function AppHome() {
   const [open, setOpen] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
   const [task, setTask] = useState<Task | null>(null);
+  const [remindersOn, setRemindersOn] = useState<boolean>(false);
 
   useEffect(() => {
     setStats(getStats());
     setTask(firstIncompleteTask());
+    (async () => {
+      const en = (await getReminderPref<boolean>("reminder_enabled")) ?? false;
+      setRemindersOn(en);
+    })();
   }, []);
 
   const greeting = useGreeting();
@@ -26,14 +32,27 @@ export default function AppHome() {
   return (
     <div className="pt-8 md:pt-14">
       {/* Greeting */}
-      <section className="animate-fade-up">
-        <p className="text-xs uppercase tracking-[0.22em] text-rust-600 font-medium">
-          {greeting}
-        </p>
-        <h1 className="font-display text-4xl md:text-5xl mt-2 leading-tight tracking-tight">
-          What's getting in the way{" "}
-          <span className="italic text-rust-600">right now?</span>
-        </h1>
+      <section className="animate-fade-up flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-[0.22em] text-rust-600 font-medium">
+            {greeting}
+          </p>
+          <h1 className="font-display text-4xl md:text-5xl mt-2 leading-tight tracking-tight">
+            What's getting in the way{" "}
+            <span className="italic text-rust-600">right now?</span>
+          </h1>
+        </div>
+        <Link
+          href="/app/settings"
+          aria-label="Settings"
+          className="shrink-0 mt-1 rounded-full border border-cream-200 bg-cream-50 p-2.5 text-ink-muted hover:text-ink hover:border-ink-light transition-colors relative"
+        >
+          {remindersOn ? (
+            <Bell className="h-4 w-4 text-rust-500" />
+          ) : (
+            <Settings className="h-4 w-4" />
+          )}
+        </Link>
       </section>
 
       {/* Big I'm Stuck button */}
@@ -123,7 +142,9 @@ export default function AppHome() {
             </Link>
           </div>
         )}
-      </section>{/* Quick actions */}
+      </section>
+
+      {/* Quick actions */}
       <section className="mt-10 mb-8 animate-fade-up [animation-delay:280ms] [animation-fill-mode:backwards]">
         <h2 className="font-display text-2xl">Or jump straight in</h2>
         <div className="mt-3 grid sm:grid-cols-3 gap-3">
@@ -147,6 +168,35 @@ export default function AppHome() {
           />
         </div>
       </section>
+
+      {/* Reminder nudge — only if not already on */}
+      {!remindersOn && (
+        <section className="mb-10 animate-fade-up [animation-delay:340ms] [animation-fill-mode:backwards]">
+          <Link
+            href="/app/settings"
+            className="block rounded-2xl border border-rust-400/40 bg-rust-400/5 p-5 hover:bg-rust-400/10 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 rounded-full bg-rust-500/10 text-rust-600 p-2.5">
+                <Bell className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-lg leading-snug">
+                  Want a gentle daily nudge?
+                </div>
+                <p className="text-sm text-ink-muted mt-1">
+                  ADHD brains forget apps exist. A short reminder at a time you choose
+                  brings you back when it matters.
+                </p>
+                <div className="mt-3 inline-flex items-center gap-1.5 text-sm text-rust-600 font-medium">
+                  Set it up
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </div>
+              </div>
+            </div>
+          </Link>
+        </section>
+      )}
 
       <StuckFlow open={open} onClose={() => setOpen(false)} />
     </div>
