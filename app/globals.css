@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #fbf7f1;
+  --rust: #c36a42;
+  --ink: #2a241d;
+}
+
+html,
+body {
+  background-color: var(--cream);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle paper-grain texture overlay */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* A refined focus ring consistent with the palette */
+*:focus-visible {
+  outline: 2px solid theme("colors.rust.500");
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scrollbars — muted to fit warm aesthetic */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: theme("colors.cream.300");
+  border-radius: 999px;
+  border: 2px solid theme("colors.cream.50");
+}
+::-webkit-scrollbar-thumb:hover {
+  background: theme("colors.ink.light");
+}
+
+/* Nice selection color */
+::selection {
+  background: theme("colors.rust.400");
+  color: theme("colors.cream.50");
+}
